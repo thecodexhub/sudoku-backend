@@ -24,7 +24,7 @@ configureGenkit({
 });
 
 // Define a simple flow that prompts an LLM to generate menu suggestions.
-export const menuSuggestionFlow = defineFlow(
+const menuSuggestionFlow = defineFlow(
   {
     name: "menuSuggestionFlow",
     inputSchema: z.string(),
@@ -51,4 +51,7 @@ export const menuSuggestionFlow = defineFlow(
 // must come last, after all of your plug-in configuration and flow definitions.
 // You can optionally specify a subset of flows to serve, and configure some
 // HTTP server options, but by default, the flow server serves all defined flows.
-startFlowsServer();
+startFlowsServer({
+  port: parseInt(process.env.PORT || "3400"),
+  flows: [menuSuggestionFlow],
+});
