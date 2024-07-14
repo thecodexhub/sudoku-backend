@@ -11,12 +11,19 @@
     "build:watch": "tsc --watch",
     "genkit": "genkit start",
     "lint": "eslint --ext .ts .",
-    "lint:fix": "eslint --ext .ts . --fix"
+    "lint:fix": "eslint --ext .ts . --fix",
+    "ts.check": "tsc --project tsconfig.json",
+    "pre-commit": "npm run build && git add lib",
+    "prepare": "husky"
   },
   "engines": {
     "node": "20"
   },
-  "keywords": [],
+  "keywords": [
+    "backend",
+    "firebase",
+    "genkit"
+  ],
   "author": "Sandip Pramanik <thecodexhubofficial@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -34,7 +41,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "genkit": "^0.5.6",
-    "nodemon": "^3.1.4",
+    "husky": "^9.0.11",
     "typescript": "^5.5.3"
   },
   "repository": {

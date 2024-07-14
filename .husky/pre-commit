@@ -1,0 +1,16 @@
+
+> sudoku-backend@1.0.0 pre-commit
+> npm run build && git add lib
+
+
+> sudoku-backend@1.0.0 build
+> npm run build:clean && npm run compile
+
+
+> sudoku-backend@1.0.0 build:clean
+> rm -rf ./lib
+
+
+> sudoku-backend@1.0.0 compile
+> tsc
+
