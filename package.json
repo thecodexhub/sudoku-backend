@@ -1,0 +1,49 @@
+{
+  "name": "sudoku-backend",
+  "version": "1.0.0",
+  "description": "Backend project for Sudoku made using Genkit.",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "node lib/index.js",
+    "compile": "tsc",
+    "build": "npm run build:clean && npm run compile",
+    "build:clean": "rm -rf ./lib",
+    "build:watch": "tsc --watch",
+    "genkit": "genkit start",
+    "lint": "eslint --ext .ts .",
+    "lint:fix": "eslint --ext .ts . --fix"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "keywords": [],
+  "author": "Sandip Pramanik <thecodexhubofficial@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@genkit-ai/ai": "^0.5.6",
+    "@genkit-ai/core": "^0.5.6",
+    "@genkit-ai/dotprompt": "^0.5.6",
+    "@genkit-ai/flow": "^0.5.6",
+    "@genkit-ai/googleai": "^0.5.6",
+    "express": "^4.19.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "genkit": "^0.5.6",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecodexhub/sudoku-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thecodexhub/sudoku-backend/issues"
+  },
+  "homepage": "https://github.com/thecodexhub/sudoku-backend#readme",
+  "private": true
+}
