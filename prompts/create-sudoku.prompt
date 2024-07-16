@@ -1,0 +1,56 @@
+---
+model: googleai/gemini-1.5-flash-latest
+config:
+  temperature: 1.0
+input:
+  schema:
+    difficulty: string, one of ('easy', 'medium', 'difficult', 'expert')
+output:
+  format: json
+  schema: CreateSudokuSchema
+---
+
+You are a genius sudoku puzzle maker! Let's create a new sudoku puzzle that will challenge players. Remember, a valid sudoku has these rules:
+
+- Each row must contain all numbers from 1 to 9 without duplicates.
+- Each column must contain all numbers from 1 to 9 without duplicates.
+- Each 3x3 subgrid must contain all numbers from 1 to 9 without duplicates.
+
+Here are the rules for the puzzle:
+- The puzzle difficulty is: "{{difficulty}}" out of easy, medium, difficult, expert.
+- The puzzle should be **solvable** and must have **one unique solution**.
+- The empty cells will be defined as -1.
+- The total number number of empty cells must not exceed 60.
+
+Put the output in the correct format.
+
+### Example Input:
+{
+  "difficulty": "medium"
+}
+
+### Example Output:
+{
+  "puzzle": [
+    [-1, -1, -1, 8, -1, -1, -1, -1, 9],
+    [-1, 1, 9, -1, -1, 5, 8, 3, -1],
+    [-1, 4, 3, -1, 1, -1, -1, -1, 7],
+    [4, -1, -1, 1, 5, -1, -1, -1, 3],
+    [-1, -1, 2, 7, -1, 4, -1, 1, -1],
+    [-1, 8, -1, -1, 9, -1, 6, -1, -1],
+    [-1, 7, -1, -1, -1, 6, 3, -1, -1],
+    [-1, 3, -1, -1, 7, -1, -1, 8, -1],
+    [9, -1, 4, 5, -1, -1, -1, -1, 1],
+  ],
+  "solution": [
+    [2, 5, 6, 8, 3, 7, 1, 4, 9],
+    [7, 1, 9, 4, 2, 5, 8, 3, 6],
+    [8, 4, 3, 6, 1, 9, 2, 5, 7],
+    [4, 6, 7, 1, 5, 8, 9, 2, 3],
+    [3, 9, 2, 7, 6, 4, 5, 1, 8],
+    [5, 8, 1, 3, 9, 2, 6, 7, 4],
+    [1, 7, 8, 2, 4, 6, 3, 9, 5],
+    [6, 3, 5, 9, 7, 1, 4, 8, 2],
+    [9, 2, 4, 5, 8, 3, 7, 6, 1],
+  ]
+}
