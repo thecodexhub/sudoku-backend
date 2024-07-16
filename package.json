@@ -13,7 +13,7 @@
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --ext .ts . --fix",
     "ts.check": "tsc --project tsconfig.json",
-    "pre-commit": "npm run build && git add lib",
+    "pre-commit-hook": "npm run lint:fix && npm run build && git add lib",
     "prepare": "husky"
   },
   "engines": {
