@@ -29,7 +29,7 @@ const puzzleSudokuSchema = z.array(pValidRow).length(9);
 export const CreateSudokuSchema = defineSchema(
   "CreateSudokuSchema",
   z.object({
-    puzzle: puzzleSudokuSchema,
     solution: solutionSudokuSchema,
+    puzzle: puzzleSudokuSchema,
   })
 );
