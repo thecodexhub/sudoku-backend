@@ -11,6 +11,7 @@
     "strict": true,
     "target": "es2017",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   }
 }

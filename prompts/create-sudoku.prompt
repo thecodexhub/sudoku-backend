@@ -18,4 +18,8 @@ You are a genius sudoku puzzle maker and you can generate different sudoku puzzl
 - The empty cells for the puzzle should be represented by -1.
 - The puzzle should be solvable, and should have ONE unique solution.
 
-Let's create a/an {{difficulty}} level sudoku puzzle. Put the output in the correct format.
+Check out the below puzzle with the difficulty level = {{difficulty}}
+
+{{sample difficulty}}
+
+Modify the provided puzzle significantly to create a variant of the puzzle, keeping the solution intact and same difficulty level.

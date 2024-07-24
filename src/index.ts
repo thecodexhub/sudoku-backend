@@ -2,16 +2,26 @@ import * as z from "zod";
 
 import { configureGenkit } from "@genkit-ai/core";
 import { defineFlow, startFlowsServer } from "@genkit-ai/flow";
-
 import { googleAI } from "@genkit-ai/googleai";
+import { defineHelper, dotprompt, prompt } from "@genkit-ai/dotprompt";
+
 import { CreateSudokuSchema } from "./schemas/create-sudoku-schema";
-import { dotprompt, prompt } from "@genkit-ai/dotprompt";
 import { HintOutputSchema } from "./schemas/hint-output-schema";
+import { format2DArray, getRandomSudoku } from "./random-sudoku";
 
 configureGenkit({
   plugins: [googleAI({ apiVersion: ["v1beta"] }), dotprompt()],
   logLevel: "debug",
   enableTracingAndMetrics: true,
+});
+
+defineHelper("sample", (difficulty: string) => {
+  const { solution, puzzle } = getRandomSudoku(difficulty);
+  return `## Solution
+  ${format2DArray(solution)}
+  
+  ## Puzzle
+  ${format2DArray(puzzle)}`;
 });
 
 const difficultySchema = z.object({
@@ -45,10 +55,6 @@ const validateSudoku = (solution: number[][]): boolean => {
     }
   }
 
-  // console.log(`Row valid? ${solution.every((n) => new Set(n).size === 9)}`);
-  // console.log(`Column valid? ${columns.every((n) => new Set(n).size === 9)}`);
-  // console.log(`Subgrid valid? ${subGrids.every((n) => new Set(n).size === 9)}`);
-
   return (
     solution.every((n) => new Set(n).size === 9) &&
     columns.every((n) => new Set(n).size === 9) &&
@@ -70,11 +76,13 @@ const createSudokuFlow = defineFlow(
     const result = await dPrompt.generate({ input });
     const response: z.infer<typeof CreateSudokuSchema> = result.output();
 
-    if (!validateSudoku(response.solution)) {
-      throw new Error("Gemini couldn't generate a valid Sudoku puzzle");
+    if (validateSudoku(response.solution)) {
+      console.log("Generated Sudoku with GEMINI");
+      return response;
     }
 
-    return response;
+    console.log("Gemini couldn't generate valid puzzle. Responding with Pre-defined Sudoku.");
+    return getRandomSudoku(input.difficulty);
   }
 );
 

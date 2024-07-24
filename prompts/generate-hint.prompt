@@ -13,24 +13,20 @@ output:
 
 You are an expert sudoku puzzle solver and a helpful agent that can generate me a helpful hint because I am stuck.
 
-I am going to provide you the current state of the puzzle, and its solution (both in a 2D array, and 0-indexed).
-
-The current state of the sudoku puzzle in 2D format is:
+## The current state of the sudoku puzzle in 2D format is:
 [{{#each puzzle}}
-[{{#each .}} {{this}}, {{/each}}]
+  [{{#each .}} {{this}}, {{/each}}]
 {{/each}}]
 
-Here is the solution board of the sudoku puzzle in 2D format:
+## Here is the solution board of the sudoku puzzle in 2D format:
 [{{#each solution}}
 [{{#each .}} {{this}}, {{/each}}],
 {{/each}}]
 
-Pick a cell from puzzle, that contains -1. Remember this is how the hint will be structured:
-
-- cell: the index of the cell we will be solving with this hint, defined with indices (0-based).
+- cell: coordinates (row, column) of the cell we will be solving with this hint.
 - entry: this is the number which will be put in the selected **cell**.
-- observation: an observation on the current state of the puzzle, towards the hint.
-- explanation: reasoning behind choosing the **cell** during **observation**.
-- solution: the answer to be put in that selected **cell**. Also, provide a brief explanation on why the number is being put.
+- observation: an observation on the current state of the puzzle, towards the hint, using human-readable row and column numbers (e.g., (0, 2) will be "first row, third column").
+- explanation: explain the hint in a clear and concise manner, using human-readable row and column numbers (e.g., (0, 2) coordinate will be  "first row, third column").
+- solution: the answer to be put in that selected **cell**. Also, provide a brief that the number is being put.
 
-Analyze the situation from the **puzzle** and offer a suggestion based on **solution**. Put the output in the correct format.
+Analyze the provided Sudoku puzzle and its solution to generate a helpful hint for solving the next step. Clearly explain the logic behind the hint, such as highlighting potential candidates for a specific cell, identifying missing numbers in a row, column, or subgrid, or pointing out any visible patterns. Ensure the generated hint aligns with the provided solution.
