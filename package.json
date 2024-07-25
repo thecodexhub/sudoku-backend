@@ -32,6 +32,7 @@
     "@genkit-ai/dotprompt": "^0.5.6",
     "@genkit-ai/flow": "^0.5.6",
     "@genkit-ai/googleai": "^0.5.6",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "zod": "^3.23.8"
   },

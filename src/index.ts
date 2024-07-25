@@ -1,4 +1,5 @@
 import * as z from "zod";
+import "dotenv/config";
 
 import { configureGenkit } from "@genkit-ai/core";
 import { defineFlow, startFlowsServer } from "@genkit-ai/flow";
@@ -8,13 +9,28 @@ import { defineHelper, dotprompt, prompt } from "@genkit-ai/dotprompt";
 import { CreateSudokuSchema } from "./schemas/create-sudoku-schema";
 import { HintOutputSchema } from "./schemas/hint-output-schema";
 import { format2DArray, getRandomSudoku } from "./random-sudoku";
+import { NextFunction, Request, Response } from "express";
 
+// Configure genkit with Google AI and Dot Prompt.
 configureGenkit({
   plugins: [googleAI({ apiVersion: ["v1beta"] }), dotprompt()],
   logLevel: "debug",
   enableTracingAndMetrics: true,
 });
 
+// Error when setting `req.auth` in middleware: Property 'auth' does
+// not exist on type 'Request<ParamsDictionary>'.
+// https://stackoverflow.com/questions/44383387/typescript-error-property-user-does-not-exist-on-type-request
+declare module "express" {
+  export interface Request {
+    auth?: string;
+  }
+}
+
+/**
+ * Handlebars helper that picks a sudoku randomly based on difficulty
+ * and formats the 2-D array. Used in hint generation dot prompt.
+ */
 defineHelper("sample", (difficulty: string) => {
   const { solution, puzzle } = getRandomSudoku(difficulty);
   return `## Solution
@@ -24,15 +40,31 @@ defineHelper("sample", (difficulty: string) => {
   ${format2DArray(puzzle)}`;
 });
 
+/**
+ * Difficulty schema, used as the input schema definition for the `createSudokuFlow`.
+ */
 const difficultySchema = z.object({
   difficulty: z.string(),
 });
 
+/**
+ * Hint schema, used as the input schema definition for the `generateHintFlow`.
+ */
 const hintSchema = z.object({
   solution: z.array(z.array(z.number())),
   puzzle: z.array(z.array(z.number())),
 });
 
+/**
+ * Determines whether the provided sudoku is valid or not.
+ *
+ * The validation is checked in 3 stages:
+ * - Every row must have 1 to 9 numbers without duplicates
+ * - Every column must have 1 to 9 numbers without duplicates
+ * - And every subgrid must have 1 to 9 numbers without duplicates
+ * @param solution - Solution object from the generated puzzle
+ * @returns {boolean} true if the puzzle is valid, otherwise false.
+ */
 const validateSudoku = (solution: number[][]): boolean => {
   const columns = [];
   for (const index in solution) {
@@ -62,11 +94,26 @@ const validateSudoku = (solution: number[][]): boolean => {
   );
 };
 
+/**
+ * Flow definition for creating sudoku.
+ */
 const createSudokuFlow = defineFlow(
   {
     name: "createSudokuFlow",
     inputSchema: difficultySchema,
     outputSchema: CreateSudokuSchema,
+    middleware: [
+      (req: Request, res: Response, next: NextFunction) => {
+        const apiToken = req.headers["x-api-key"] as string | undefined;
+        req.auth = apiToken;
+        next();
+      },
+    ],
+    authPolicy: (auth) => {
+      if (auth !== process.env.API_KEY) {
+        throw new Error("Authorization required!");
+      }
+    },
   },
   async (input) => {
     const dPrompt = await prompt<z.infer<typeof difficultySchema>>(
@@ -81,16 +128,33 @@ const createSudokuFlow = defineFlow(
       return response;
     }
 
-    console.log("Gemini couldn't generate valid puzzle. Responding with Pre-defined Sudoku.");
+    console.log(
+      "Gemini couldn't generate valid puzzle. Responding with Pre-defined Sudoku."
+    );
     return getRandomSudoku(input.difficulty);
   }
 );
 
+/**
+ * Flow definition for generating hints.
+ */
 const generateHintFlow = defineFlow(
   {
     name: "generateHintFlow",
     inputSchema: hintSchema,
     outputSchema: HintOutputSchema,
+    middleware: [
+      (req: Request, res: Response, next: NextFunction) => {
+        const apiToken = req.headers["x-api-key"] as string | undefined;
+        req.auth = apiToken;
+        next();
+      },
+    ],
+    authPolicy: (auth) => {
+      if (auth !== process.env.API_KEY) {
+        throw new Error("Authorization required!");
+      }
+    },
   },
   async (input) => {
     const dPrompt = await prompt<z.infer<typeof hintSchema>>("generate-hint");
@@ -101,6 +165,7 @@ const generateHintFlow = defineFlow(
   }
 );
 
+// Starting the flow server.
 startFlowsServer({
   port: parseInt(process.env.PORT || "3400"),
   flows: [createSudokuFlow, generateHintFlow],
