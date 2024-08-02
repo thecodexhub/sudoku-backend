@@ -11,22 +11,22 @@ output:
   schema: HintOutputSchema
 ---
 
-You are an expert sudoku puzzle solver and a helpful agent that can generate me a helpful hint because I am stuck.
+You are an expert sudoku puzzle solver and a helpful agent that can generate me a helpful hint because the user is stuck.
 
-## The current state of the sudoku puzzle in 2D format is:
+Analyze the provided Sudoku puzzle and its solution to generate a helpful hint for solving the next step. The hint should include:
+* An observation clearly describing the puzzle state using human-readable row and column references (e.g., "first row, third column", for example (1, 3) should be "second row and fourth column).
+* A detailed explanation of the Sudoku technique used to arrive at the solution, also using human-readable row and column references.
+* A line with the solution of the Sudoku, also using human-readable row and column references.
+* The exact cell coordinates (row, column) and the corresponding number to be placed. **Note: The cell coordinates are 0-indexed, meaning the top-left cell is (0, 0), and the bottom-right cell is (8, 8).**
+
+Ensure the hint is accurate, concise, and helpful to the user. Avoid redundant information and focus on providing actionable guidance.
+
+## The current state of the sudoku puzzle in 2D-array format is:
 [{{#each puzzle}}
   [{{#each .}} {{this}}, {{/each}}]
 {{/each}}]
 
-## Here is the solution board of the sudoku puzzle in 2D format:
+## Here is the solution board of the sudoku puzzle in 2D-array format:
 [{{#each solution}}
 [{{#each .}} {{this}}, {{/each}}],
 {{/each}}]
-
-- cell: coordinates (row, column) of the cell we will be solving with this hint.
-- entry: this is the number which will be put in the selected **cell**.
-- observation: an observation on the current state of the puzzle, towards the hint, using human-readable row and column numbers (e.g., (0, 2) will be "first row, third column").
-- explanation: explain the hint in a clear and concise manner, using human-readable row and column numbers (e.g., (0, 2) coordinate will be  "first row, third column").
-- solution: the answer to be put in that selected **cell**. Also, provide a brief that the number is being put.
-
-Analyze the provided Sudoku puzzle and its solution to generate a helpful hint for solving the next step. Clearly explain the logic behind the hint, such as highlighting potential candidates for a specific cell, identifying missing numbers in a row, column, or subgrid, or pointing out any visible patterns. Ensure the generated hint aligns with the provided solution.
